@@ -1,0 +1,40 @@
+{% extends 'base.html' %} 
+
+{% block content %} 
+
+
+<div class="showcase_w3layouts">
+		<div class="container">
+        {% for event in event_list %}
+			<div class="our_agile-info">
+     
+			<div class="showcase">
+				<div class="desc">
+            {% include 'events/snippets/card.html' with instance=event %}
+				</div>
+			</div>
+    </div>
+    {% endfor %}
+  </div>
+	</div>
+
+<!-- <div class="ser_agile">
+    <div class="container">
+    <div class="ser_w3l">  
+        <div class="outer-wrapper">
+            <div class="inner-wrapper">
+              <div class="icon-wrapper">
+                <i class="fa fa-birthday-cake" aria-hidden="true"></i>
+              </div>
+              
+              <div class="content-wrapper">
+                    
+              </div>
+            </div>
+          </div>
+    </div>
+    </div>
+  </div> -->
+
+ 
+{% endblock %}

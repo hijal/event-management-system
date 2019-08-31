@@ -1,0 +1,83 @@
+{% extends 'base.html'  %}
+
+
+
+{% block content %}
+    {% if cart.forwhom.exists %}
+    <table class="table">
+        <thead>
+            <tr>
+            <th>Items</th>
+            <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for forwhom in cart.forwhom.all %}
+            <tr>
+            <td>{{ forwhom.select }}</td>
+            </tr>
+            {% endfor %}
+
+            {% for eventtype in cart.eventType.all %}
+            <tr>
+            <td>{{ eventtype.name }}</td>
+            <td>{{ eventtype.dam }}</td>
+            </tr>
+            {% endfor %}
+
+            {% for guest in cart.guest.all %}
+            <tr>
+            <td>{{ guest.number }}</td>
+            <td>{{ guest.price }}</td>
+            </tr>
+            {% endfor %}
+
+            {% for date in cart.date.all %}
+            <tr>
+            <td>{{ date.date }}</td>
+            </tr>
+            {% endfor %}
+
+            <tr>
+            <td colspan="1"></td>
+            <td><b>{{ cart.total }}</b></td>
+            </tr>
+            <tr>
+            <td colspan="1"></td>
+            <td>
+                <a class="btn btn-lg btn btn-success" href="{% url 'cart:checkout' %}">Checkout</a>
+            </td>
+            </tr>
+        </tbody>
+    </table>
+    {% else %}
+    <div class="showcase_w3layouts">
+            <div class="container">
+            
+                <div class="our_agile-info">
+         
+                <div class="showcase">
+                        <div class="thumbnail thumbnail--awesome5">
+                                <div class="thumbnail__overlay">
+                                    
+                                </div>
+                            </div>
+                    <div class="desc">
+                        <h2 class="lead">Cart is Empty</h2>
+                    </div>
+                </div>
+        </div>
+
+      </div>
+        </div>
+    <!-- <div class="container">	
+            <div class="about-grids">
+                <div class="abt-rt-grid">
+                    
+                </div>
+            </div>
+        </div>
+         -->
+    {% endif %}
+
+{% endblock %}

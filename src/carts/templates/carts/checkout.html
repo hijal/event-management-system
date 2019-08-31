@@ -1,0 +1,206 @@
+{% extends 'base.html'  %}
+
+
+
+{% block content %}
+
+    {% if not billing_profile %}
+    <p class="lead">Login</p>
+    <div class="row text-center">
+        <div class="col-12 col-md-6">
+           
+            {% include 'accounts/snippets/form.html' with form=login_form next_url=request.build_absolute_uri %}
+        </div>
+        <div class="col-12 col-md-6">
+            <p class="lead">Continue as Guest</p>
+            {% url 'guest_register' as guest_register_url %}
+            {% include 'accounts/snippets/form.html' with form=guest_form next_url=request.build_absolute_uri action_url=guest_register_url%}
+        </div>
+    </div>
+    {% else %}
+        {% if not object.shipping_address %}
+            <p class="lead">Shipping Address </p> <hr>
+            {% url 'checkout_address_create' as checkout_address_create_url %}
+            {% include 'addresses/form.html' with form=address_form next_url=request.build_absolute_uri action_url=checkout_address_create_url address_type='shipping' %}
+        {% elif not object.billing_address %}
+            <p class="lead">Billing Address </p> <hr>
+            {% url 'checkout_address_create' as checkout_address_create_url %}
+            {% include 'addresses/form.html' with form=address_form next_url=request.build_absolute_uri action_url=checkout_address_create_url address_type='billing' %}
+        {% else %}
+            {% if not has_card %}
+            <div class="row">
+                <div class="col-6">
+                  <form class="payment-form" action="/charge" method="POST" id="payment-form" data-token="{{ publish_key }}" data-next-url="{{request.build_absolute_uri}}">
+                    
+                    <div class="form-row">
+                      <label for="card-element">
+                        Credit or debit card
+                      </label>
+                      <div id="card-element" class="form-control">
+                        <!-- A Stripe Element will be inserted here. -->
+                      </div>
+                      
+                      <!-- Used to display form errors. -->
+                      <div id="card-errors" role="alert"></div>
+                    </div>
+                  
+                    <button class="btn btn-primary my-3">Submit Payment</button>
+                  </form>
+                </div>
+                
+              </div>
+              <script src="https://js.stripe.com/v3/"></script>
+<script>
+
+  var paymentForm = $(".payment-form");
+// Create a Stripe client.
+if(paymentForm.length == 1){
+  var pubKey = paymentForm.attr('data-token');
+  var nextUrl = paymentForm.attr('data-next-url');
+
+var stripe = Stripe(pubKey);
+
+// Create an instance of Elements.
+var elements = stripe.elements();
+
+// Custom styling can be passed to options when creating an Element.
+// (Note that this demo uses a wider set of styles than the guide below.)
+var style = {
+  base: {
+    color: '#32325d',
+    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+    fontSmoothing: 'antialiased',
+    fontSize: '16px',
+    '::placeholder': {
+      color: '#aab7c4'
+    }
+  },
+  invalid: {
+    color: '#fa755a',
+    iconColor: '#fa755a'
+  }
+};
+
+// Create an instance of the card Element.
+var card = elements.create('card', {style: style});
+
+// Add an instance of the card Element into the `card-element` <div>.
+card.mount('#card-element');
+
+// Handle real-time validation errors from the card Element.
+card.addEventListener('change', function(event) {
+  var displayError = document.getElementById('card-errors');
+  if (event.error) {
+    displayError.textContent = event.error.message;
+  } else {
+    displayError.textContent = '';
+  }
+});
+
+// Handle form submission.
+var form = document.getElementById('payment-form');
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  stripe.createToken(card).then(function(result) {
+    if (result.error) {
+      // Inform the user if there was an error.
+      var errorElement = document.getElementById('card-errors');
+      errorElement.textContent = result.error.message;
+    } else {
+      // Send the token to your server.
+      stripeTokenHandler(nextUrl, result.token);
+    }
+  });
+});
+
+
+function redirectToNext(nextPath, timeoffset){
+  if(nextPath){
+    setTimeout(function(){
+      window.location.href = nextPath
+    }, timeoffset)
+  }
+}
+// Submit the form with the token ID.
+function stripeTokenHandler(nextUrl, token){
+  //console.log(token.id);
+  var paymentMethodEndpoint = '/billing/payment-method/create/';
+  var data = {
+    'token' : token.id
+  }
+  $.ajax({
+    data : data,
+    url : paymentMethodEndpoint,
+    method : "POST",
+    success: function(data){
+      var successMsg = data.message || "Success! Your card was added.";
+      card.clear()
+      if($.alert){
+        $.alert(successMsg);
+      }
+      else{
+        alert(successMsg);
+      }
+      redirectToNext(nextUrl, 1500);
+    },
+    error: function(error){
+      console.log(error);
+    }
+  })
+}
+}
+</script>
+            {% else %}
+
+                <h1>Checkout</h1>
+                <p>
+                    Cart Items :
+                    {% for forwhom in object.cart.forwhom.all %}
+                        {{ forwhom }}
+                        {% if not forloop.last %} , 
+                        {% endif %}
+                    {% endfor %}
+                    {% for eventtype in object.cart.eventType.all %}
+                        {{ eventtype }}
+                        {% if not forloop.last %} , 
+                        {% endif %}
+                    {% endfor %}
+                    {% for guest in object.cart.guest.all %}
+                        {{ guest }}
+                        {% if not forloop.last %} , 
+                        {% endif %}
+                    {% endfor %}
+                    {% for date in object.cart.date.all %}
+                        {{ date }}
+                        {% if not forloop.last %} , 
+                        {% endif %}
+                    {% endfor %}
+                </p>
+                <p>
+                    Shipping Address: {{ object.shipping_address.get_address }}
+                </p>
+                <p>
+                    Billing Address: {{ object.billing_address.get_address }}
+                </p>
+                <p>
+                    Payment Method : {{ billing_profile.default_card }}
+                    (<a href="{{ billing_profile.get_payment_method_url }}?next={{ request.build_absolute_uri }}">Change</a>)
+                </p>
+                <p>
+                    Cart Total : {{ object.cart.total }}
+                </p>
+                <p>
+                    Shipping Total : {{ object.shipping_total }}
+                </p>
+                <p>
+                    <b>Order Total </b> : {{ object.total }}
+                </p>
+                <form method="POST" class="form" action="">
+                    {% csrf_token %}
+                    <button class="btn btn-success" type="submit">checkout</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endblock %}

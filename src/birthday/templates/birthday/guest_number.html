@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container">	
+        <div class="about-grids">
+            <div class="abt-rt-grid">
+                <div class="abt-form">
+                    <form  method="post">
+                        {% csrf_token %}
+                        <div class="col-sm-4 col-xs-4 w3ls-lt-form">
+                            <div class="w3ls-pr">
+                                    <input class="ml-5 tp-radio-button" type="radio" name="number" value="50"> Less Than 50 <hr>
+                                    <input class="ml-5 tp-radio-button" type="radio" name="number" value="75"> 50-100 <hr>
+                                    <input class="ml-5 tp-radio-button" type="radio" name="number" value="125"> 100-150 <hr>
+                                    <input class="ml-5 tp-radio-button" type="radio" name="number" value="175"> 150-200 <hr>
+                                    <input class="ml-5 tp-radio-button" type="radio" name="number" value="225"> 200-250 <hr>            
+                                    <hr>            
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <input type="submit" class="btn btn-block btn-primary " value="Next">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock%}

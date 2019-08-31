@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<div class="showcase_w3layouts">
+		<div class="abt-form">
+        <form method="POST" id="personForm" data-cities-url="{% url 'location:ajax_load_cities' %}" data-com-url="{% url 'location:ajax_load_center' %}" novalidate>
+          <div class="col-sm-4 col-xs-4 w3ls-lt-form">
+            <div class="w3ls-pr">
+                {% csrf_token %}
+                {{ form|crispy }}
+            </div>
+          </div>
+          <div class="clearfix"></div>
+          <input type="submit" class="btn btn-block" value="Getting Start">
+        </form>
+      </div>
+	</div>
+
+
+
+  <!-- <div class="row">
+    <div class="col-12 col-md-6">
+      <form class="form-control" method="POST" id="personForm" data-cities-url="{% url 'location:ajax_load_cities' %}" data-com-url="{% url 'location:ajax_load_center' %}" novalidate>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="btn btn-block btn-success" type="submit">Save</button>
+    
+      </form>
+    </div>
+  </div> -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script>
+    $("#id_city").change(function () {
+      var url = $("#personForm").attr("data-cities-url");
+      var cityId = $(this).val();
+      $.ajax({
+        url: url,
+        data: {
+          'city': cityId
+        },
+        success: function (data) {
+          $("#id_place").html(data);
+        }
+      });
+    });
+
+    $("#id_place").change(function () {
+      var url = $("#personForm").attr("data-com-url");
+      var placeId = $(this).val();
+     
+      $.ajax({
+        url: url,
+        data: {
+          'place': placeId,
+        },
+        success: function (data) {
+          $("#id_center").html(data);
+        }
+      });
+    });
+  </script>
+{% endblock %}

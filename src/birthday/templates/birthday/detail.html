@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<style>
+  .btn {
+    padding: 1em 2em;
+    border: 0.15em solid #fff;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    transition: background 250ms;
+    float: left;
+}
+</style>
+<h1>Your Selection</h1>
+<div class="outer-wrapper">
+    <div class="inner-wrapper">
+      <div class="icon-wrapper">
+        {% for x in forwhom %}
+            <h3>{{ x.select }}</h3>
+        {% endfor %}
+      </div>
+      
+      <div class="content-wrapper">
+            {% for x in forwhom %}
+                <form method="POST" class="form" action="{% url 'cart:forwhom_update' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="forwhom_id" value="{{ x.id }}">
+                        {% if x in cart_obj.forwhom.all %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin: 30px;" type="button">Remove</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin: 30px;" type="button">Add to Cart</button>
+                        {% endif %}
+                </form>
+        {% endfor %}                                   
+      </div>
+    </div>
+  </div>
+
+  <div class="outer-wrapper">
+    <div class="inner-wrapper">
+      <div class="icon-wrapper">
+        {% for x in eventtype %}
+            <h3>{{ x.name }}</h3>
+        {% endfor %}
+      </div>
+      
+      <div class="content-wrapper">
+            {% for x in eventtype %}
+                <form method="POST" class="form" action="{% url 'cart:update' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="event_id" value="{{ x.id }}">
+                        {% if x in cart_obj.eventType.all %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin: 30px;" type="button">Remove</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin: 30px;" type="button">Add to Cart</button>
+                        {% endif %}
+                </form>
+        {% endfor %}                                   
+      </div>
+    </div>
+  </div>
+
+  <div class="outer-wrapper">
+    <div class="inner-wrapper">
+      <div class="icon-wrapper">
+        {% for x in guest %}
+            <h3>{{ x.number }}</h3>
+        {% endfor %}
+      </div>
+      
+      <div class="content-wrapper">
+            {% for x in guest %}
+                <form method="POST" class="form" action="{% url 'cart:guest_update' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="guest_id" value="{{ x.id }}">
+                        {% if x in cart_obj.guest.all %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin: 30px;" type="button">Remove</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin: 30px;" type="button">Add to Cart</button>
+                        {% endif %}
+                </form>
+        {% endfor %}                                   
+      </div>
+    </div>
+  </div>
+
+  <div class="outer-wrapper">
+    <div class="inner-wrapper">
+      <div class="icon-wrapper">
+        {% for x in date %}
+            <h3>{{ x.date }}</h3>
+        {% endfor %}
+      </div>
+      
+      <div class="content-wrapper">
+            {% for x in date %}
+                <form method="POST" class="form" action="{% url 'cart:date_update' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="date_id" value="{{ x.id }}">
+                        {% if x in cart_obj.date.all %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin: 30px;" type="button">Remove</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin: 30px;" type="button">Add to Cart</button>
+                        {% endif %}
+                </form>
+        {% endfor %}                                   
+      </div>
+    </div>
+  </div>
+  <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  
+  <div class="container">
+    <a type="submit" href="{% url 'cart:home' %}" class="btn btn-primary">Check Cart</a>
+  </div>
+  
+{% endblock%}

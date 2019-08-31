@@ -1,0 +1,16 @@
+{% load crispy_forms_tags %}
+
+
+<div class="content-section" style="width: 70%;">
+        <form method="POST">
+             <form class="form-control" action=" {% if action_url  %}{{ action_url }} {% else %} {% url 'login' %} {% endif %}" method="POST">
+            {% csrf_token %}
+            {% if next_url %}
+                <input type="hidden" name="next" value="{{ next_url}}">
+            {% endif %}
+            {{ form | crispy }}
+            <input type="submit" class="btn btn-primary btn-sm" value="submit">
+        </form>
+    </div>
+
+
